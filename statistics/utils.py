@@ -19,3 +19,5 @@ def five_number_summary(values: pd.Series, show: bool=False) -> Tuple[float, flo
         print(f"\t3rd quartile (Q3): {q3}.")
         print(f"\tMaximum: {max}.")
     return min, q1, median, q3, max
+
+
