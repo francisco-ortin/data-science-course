@@ -4,7 +4,7 @@ from typing import Tuple
 import pandas as pd
 
 
-def five_number_summary(values: pd.Series, show: bool=False) -> Tuple[float, float, float, float, float]:
+def five_number_summary(values: pd.Series, show: bool = False) -> Tuple[float, float, float, float, float]:
     """
     Show the five-number summary of a given pandas Series.
     :param values: The pandas Series to show the five-number summary.
