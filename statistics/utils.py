@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, List
 
 import numpy as np
 import pandas as pd
@@ -54,3 +54,17 @@ def do_intervals_overlap(interval1: Tuple[float, float], interval2: Tuple[float,
     :return: Whether the intervals overlap or not.
     """
     return interval1[1] >= interval2[0] and interval1[0] <= interval2[1]
+
+
+def cohen_d(x: List[float] | np.ndarray, y: List[float] | np.ndarray) -> float:
+    """
+    Compute the Cohen's d effect size between two samples.
+    :param x: first sample
+    :param y: second sample
+    :return: value of Cohen's d
+    """
+    n_x = len(x)
+    n_y = len(y)
+    dof = n_x + n_y - 2
+    return (np.mean(x) - np.mean(y)) / np.sqrt(
+        ((n_x - 1) * np.std(x, ddof=1) ** 2 + (n_y - 1) * np.std(y, ddof=1) ** 2) / dof)
