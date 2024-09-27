@@ -1,9 +1,8 @@
 # Data science course
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/francisco-ortin/data-science-course/blob/main/statistics/colab.ipynb)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 
-This is the material of the data science course delivered by [Francisco Ortín](https://www.reflection.uniovi.es/ortin/) 
+This is the material of the data science course delivered by [Francisco Ortin](https://www.reflection.uniovi.es/ortin/) 
 at the [University of Oviedo](https://www.uniovi.es).
 
 ## Table of contents
