@@ -4,10 +4,11 @@
 # stored in (data/housing_curated.csv).
 
 from sklearn.linear_model import SGDRegressor
-import utils
 from sklearn.feature_selection import SelectKBest, f_regression
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler, PolynomialFeatures
+from sklearn.preprocessing import RobustScaler, PolynomialFeatures
 import pandas as pd
+
+import utils
 
 pd.set_option('display.max_columns', None)  # Display all columns of a DataFrame in pandas
 random_state = 42
@@ -61,7 +62,7 @@ utils.show_regression_performance(
 # FEATURE SELECTION
 # Let's select the most important features using the SelectKBest
 features_to_select = len(independent_vars)
-selector = SelectKBest(score_func=f_regression, k=features_to_select)  # Select same number as the original independent vars
+selector = SelectKBest(score_func=f_regression, k=features_to_select)  # select same number as the original independent vars
 X_train_selected = selector.fit_transform(X_train_scaled, y_train)
 X_test_selected = selector.transform(X_test_scaled)
 
@@ -91,12 +92,11 @@ utils.show_regression_performance(
 
 # Exactly, the model's performance decreases because we are removing relevant features, making the model too simple (underfitting).
 # QUESTION: How do you think we could find the optimal number of features to select?
-# ANSWER: Using a validation set, we could try different values, estimate the best one and peform the final
+# ANSWER: Using a validation set, we could try different values, estimate the best one and perform the final
 # evaluation of the model's performance using the test set.
 
 # L1 REGULARIZATION (LASSO REGRESSION)
 # Let's apply L1 regularization to polynomial features with all the features
-# Create a SDG regression with L1 regularization
 # We first select too many features on purpose to see the effect of L1 regularization
 features_to_select = 5*len(independent_vars)
 alpha = 5e3
