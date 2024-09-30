@@ -13,7 +13,6 @@ at the [University of Oviedo](https://www.uniovi.es).
 ## Table of contents
 
 *To be completed.*
-KKK
 
 ## License
 
