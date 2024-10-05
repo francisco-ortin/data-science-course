@@ -64,7 +64,7 @@ print(f"Time elapsed: {time() - time_before:.2f} seconds.")
 
 # METHOD ONE: TRAIN AND EVALUATE THE MODELS N TIMES AND COMPUTE THE 95% CONFIDENCE INTERVALS
 
-# Evaluate the performance of a desired model N times using cross validation
+# Evaluate the performance of a desired model N times
 print(f"\n{'-'*5} Re-train and re-evaluate method {'-'*5}")
 time_before = time()
 n_times = 30
