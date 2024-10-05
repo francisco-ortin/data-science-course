@@ -1,9 +1,17 @@
 # We will perform customer segmentation using the KMeans algorithm.
 # The dataset contains information about customers such as their annual income, spending
-# score, age and gender.
+# score, age and gender. The dataset is stored in the file 'data/customers.csv'.
 # We will use the KMeans algorithm to cluster the customers into different groups.
+# Then, we will perform a cluster analysis (https://en.wikipedia.org/wiki/Cluster_analysis).
 # The goal is to understand the different customer segments and their characteristics.
-# The dataset contains the following columns: 'Annual Income (k$)', 'Spending Score (1-100)', 'Age' and 'Gender'.
+# Clustering is an important task of exploratory data analysis, and a common technique for statistical data analysis,
+# used in many fields.
+
+# The dataset contains the following columns:
+# - Annual Income (k$, integer value).
+# - Spending Score (1-100, integer value).
+# - Age (integer value).
+# - Gender (Male or Female).
 
 import numpy as np
 import pandas as pd
