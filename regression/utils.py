@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -33,7 +31,7 @@ def plot_actual_vs_predicted_values(y_test: np.ndarray, y_pred: np.ndarray) -> N
 
 def load_dataset_from_csv(csv_file: str, independent_vars: list, dependent_var: str, test_size: float,
                           random_state: int)\
-        -> Tuple[Tuple[pd.DataFrame, pd.Series], Tuple[pd.DataFrame, pd.Series]]:
+        -> tuple[tuple[pd.DataFrame, pd.Series], tuple[pd.DataFrame, pd.Series]]:
     """ Load a dataset from a CSV file, select the independent and dependent variables, and split the dataset into
        training and testing sets."""
     # Load the dataset from the CSV file
@@ -148,7 +146,7 @@ def detect_outliers_iqr(df: pd.DataFrame, threshold: float = 1.5) -> pd.DataFram
 
 
 
-def evaluate_regression(y_test: np.ndarray, y_pred: np.ndarray) -> Tuple[float, float, float, float]:
+def evaluate_regression(y_test: np.ndarray, y_pred: np.ndarray) -> tuple[float, float, float, float]:
     """Evaluate the regression model using the MSE, RMSE, MAE, and R-squared metrics."""
     # MSE = Mean Squared Error
     mse = mean_squared_error(y_test, y_pred)
@@ -168,7 +166,8 @@ def store_dataset(X_train: pd.DataFrame, y_train: pd.Series, X_test: pd.DataFram
     pd.concat([train_dataset, test_dataset], axis=0).to_csv(file_name, index=False)
 
 
-def scale_X_dataset(scaler, X_train_p: pd.DataFrame, X_test_p: pd.DataFrame, integer_independent_vars: list = None) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def scale_X_dataset(scaler, X_train_p: pd.DataFrame, X_test_p: pd.DataFrame, integer_independent_vars: list = None) \
+        -> tuple[pd.DataFrame, pd.DataFrame]:
     """Scale the integer independent variables of the dataset using the provided scaler.
     If integer_independent_vars is None, all the columns will be scaled."""
     if integer_independent_vars is None:
@@ -179,7 +178,7 @@ def scale_X_dataset(scaler, X_train_p: pd.DataFrame, X_test_p: pd.DataFrame, int
 
 def create_SDG_regression_model_and_evaluate(X_train_p: pd.DataFrame, y_train_p: pd.Series, X_test_p: pd.DataFrame,
                                              y_test_p: pd.Series, random_state: int) -> \
-        Tuple[float, float, float, float]:
+        tuple[float, float, float, float]:
     """Create a Stochastic Gradient Descent (SGD) regression model and evaluate its performance."""
     model = SGDRegressor(random_state=random_state)
     model.fit(X_train_p, y_train_p)

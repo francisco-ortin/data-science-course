@@ -7,7 +7,6 @@
 
 # Let's see how an anomaly detection analysis can help us detect outliers in this dataset.
 
-from typing import Optional, Tuple
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -19,7 +18,7 @@ NUMBER_OF_SAMPLES = 1_000
 categorical_features = ['protocol_type', 'service', 'flag']
 
 
-def load_kddcup99_data(number_of_samples: Optional[int] = None) -> Tuple[pd.DataFrame, pd.Series]:
+def load_kddcup99_data(number_of_samples: int | None = None) -> tuple[pd.DataFrame, pd.Series]:
     """Loads the CSV file, clens the dataset and returns a selection of the X and y data."""
     df = pd.read_csv('data/kddcup99.csv')
     df = df.sample(frac=1, random_state=random_state).reset_index(drop=True)

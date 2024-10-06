@@ -1,4 +1,4 @@
-from typing import Tuple, List, TypeVar, Type, Optional
+from typing import TypeVar, Type
 
 import pandas as pd
 from scipy import stats
@@ -13,8 +13,8 @@ from sklearn.tree import plot_tree, DecisionTreeClassifier
 
 
 def split_dataset(dataset: pd.DataFrame, independent_vars: list, dependent_var: str, test_size: float,
-                  random_state: Optional[int]) \
-        -> Tuple[Tuple[pd.DataFrame, pd.Series], Tuple[pd.DataFrame, pd.Series]]:
+                  random_state: int | None) \
+        -> tuple[tuple[pd.DataFrame, pd.Series], tuple[pd.DataFrame, pd.Series]]:
     """ Select the independent and dependent variables, and split the dataset into
        training and testing sets."""
     # Select the independent and dependent variables
@@ -25,7 +25,7 @@ def split_dataset(dataset: pd.DataFrame, independent_vars: list, dependent_var: 
     return (X_train, y_train), (X_test, y_test)
 
 
-def show_target_per_feature_pair(X_train: pd.DataFrame, y_train: pd.Series, independent_vars: List[str],
+def show_target_per_feature_pair(X_train: pd.DataFrame, y_train: pd.Series, independent_vars: list[str],
                                  label_true_target: str, label_false_target: str) -> None:
     """Show the target variable per pairs of independent variables"""
     # Calculate the number of plots needed
@@ -57,7 +57,7 @@ def show_target_per_feature_pair(X_train: pd.DataFrame, y_train: pd.Series, inde
 
 T = TypeVar('T')  # To use generics in the following function
 def scale_X_dataset(X_train: pd.DataFrame, X_test: pd.DataFrame, scaler_class: Type[T]) -> \
-        Tuple[pd.DataFrame, pd.DataFrame]:
+        tuple[pd.DataFrame, pd.DataFrame]:
     """Scale the X_train and X_test datasets using the scaler_class"""
     # Scale X_train and X_test using the scaler_class
     scaler = scaler_class()
@@ -96,7 +96,7 @@ def plot_2d_logistic_regression_proba_classifier(X_dataset: pd.DataFrame, y_pred
     plt.show()
 
 
-def compute_metrics(models, X_test: pd.DataFrame, y_test: pd.Series, metric_function) -> List[float]:
+def compute_metrics(models, X_test: pd.DataFrame, y_test: pd.Series, metric_function) -> list[float]:
     """Compute the metric_function metric of each model"""
     # Predict the y_test values for each model
     y_predictions = [model.predict(X_test) for model in models]
@@ -104,7 +104,7 @@ def compute_metrics(models, X_test: pd.DataFrame, y_test: pd.Series, metric_func
     return [metric_function(y_test, y_pred) for y_pred in y_predictions]
 
 
-def compute_AUCs(models, X_test: pd.DataFrame, y_test: pd.Series) -> List[float]:
+def compute_AUCs(models, X_test: pd.DataFrame, y_test: pd.Series) -> list[float]:
     """Compute the AUC metric of each model"""
     # Predict the probability of y_test values for each model
     y_predictions_proba = [model.predict_proba(X_test) for model in models]
@@ -112,7 +112,7 @@ def compute_AUCs(models, X_test: pd.DataFrame, y_test: pd.Series) -> List[float]
     return [roc_auc_score(y_test, y_pred_proba) for y_pred_proba in y_predictions_proba]
 
 
-def show_metrics(metric: str, accuracies: List[float], models) -> None:
+def show_metrics(metric: str, accuracies: list[float], models) -> None:
     """Show the metric values for each model"""
     assert len(accuracies) == len(models), "The number of accuracies and models must be the same."
     print(f"Metric {metric}:")
@@ -120,8 +120,8 @@ def show_metrics(metric: str, accuracies: List[float], models) -> None:
         print(f"\t{model}: {accuracy:.4f}.")
 
 
-def visualize_decision_tree(model: DecisionTreeClassifier, independent_vars: List[str],
-                            class_names: List[str]) -> None:
+def visualize_decision_tree(model: DecisionTreeClassifier, independent_vars: list[str],
+                            class_names: list[str]) -> None:
     """Visualize a decision tree model"""
     # Visualize the decision tree
     plt.figure(figsize=(15, 10))
@@ -129,8 +129,8 @@ def visualize_decision_tree(model: DecisionTreeClassifier, independent_vars: Lis
     plt.show()
 
 
-def load_clean_titanic_dataset(dataset_file_name: str, independent_vars: List[str], dependent_var: str) \
-        -> Tuple[pd.DataFrame, List[str]]:
+def load_clean_titanic_dataset(dataset_file_name: str, independent_vars: list[str], dependent_var: str) \
+        -> tuple[pd.DataFrame, list[str]]:
     """Load the Titanic dataset, clean it and return the dataset and the list of new independent variables
     after one-hot encoding."""
     # Load the dataset
@@ -146,7 +146,7 @@ def load_clean_titanic_dataset(dataset_file_name: str, independent_vars: List[st
     return dataset, dataset.columns[dataset.columns != dependent_var]
 
 
-def evaluate_models(models, X_test: pd.DataFrame, y_test: pd.Series, verbose: bool = True) -> List[Tuple[float,float]]:
+def evaluate_models(models, X_test: pd.DataFrame, y_test: pd.Series, verbose: bool = True) -> list[tuple[float,float]]:
     """Evaluate the performance of the models."""
     metrics = []
     for model in models:
@@ -159,7 +159,7 @@ def evaluate_models(models, X_test: pd.DataFrame, y_test: pd.Series, verbose: bo
     return metrics
 
 
-def confidence_interval(data: List[float], confidence_level: float) -> Tuple[float, Tuple[float, float]]:
+def confidence_interval(data: list[float], confidence_level: float) -> tuple[float, tuple[float, float]]:
     """Compute the confidence interval of the data with the given confidence level."""
     mean = np.mean(data)
     # Calculate the 95% confidence interval

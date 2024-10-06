@@ -40,7 +40,13 @@ print(dataset.describe())
 
 
 def show_feature_distribution(X: pd.DataFrame, feature_name: str, title: str, bins: int) -> None:
-    """Shows the distribution of a feature in the dataset"""
+    """
+    Show the distribution of a feature in the dataset
+    :param X: The dataset
+    :param feature_name: The feature name
+    :param title: The title of the plot
+    :param bins: The number of bins to categorize the data
+    """
     plt.figure(figsize=(10, 6))
     plt.hist(X[feature_name], bins=bins, color='skyblue')
     plt.title(title)
@@ -57,6 +63,13 @@ show_feature_distribution(dataset, 'Gender', 'Distribution of Gender', bins=2)
 
 # Let's compute the silhouette scores for k=2 to k=10
 def compute_silhouette_scores(X: np.array, from_k: int, to_k: int) -> np.array:
+    """
+    Compute the silhouette scores for different number of clusters
+    :param X: the dataset
+    :param from_k: the minimum number of clusters
+    :param to_k: the maximum number of clusters
+    :return: the silhouette scores for each number of clusters from k=from_k to k=to_k
+    """
     scores = []
     for k in range(from_k, to_k + 1):
         kmeans = KMeans(n_clusters=k, random_state=0)
@@ -92,6 +105,12 @@ X_tsne = tsne.fit_transform(dataset)
 
 # Let's visualize the clusters of customers to see if the are well separated
 def visualize_2D(X: np.array, y: np.array, title: str) -> None:
+    """
+    Visualize the distribution of a dataset in 2D
+    :param X: the dataset to visualize
+    :param y: the labels of the dataset (clusters in this case)
+    :param title: the title of the plot
+    """
     plt.figure(figsize=(10, 8))
     palette = sns.color_palette("hsv", 10)
     sns.scatterplot(x=X[:, 0], y=X[:, 1], hue=y, palette=palette, legend='full', alpha=0.5)
@@ -105,6 +124,14 @@ visualize_2D(X_tsne, clusters, 'Clusters of Customers')
 
 # Show the distribution of all the features for each cluster
 def show_cluster_distribution(X: pd.DataFrame, clusters: np.array, n_clusters: int, feature_name: str, bins: int) -> None:
+    """
+    Show the distribution of a feature for each cluster
+    :param X: the dataset to visualize
+    :param clusters: the clusters of the dataset (labels)
+    :param n_clusters: the number of clusters
+    :param feature_name: the name of the feature in X
+    :param bins: the number of bins to categorize the data
+    """
     plt.figure(figsize=(10, 6))
     for cluster in range(n_clusters):
         sns.distplot(X[clusters == cluster][feature_name], bins=bins, label=f'Cluster {cluster}', hist=False)

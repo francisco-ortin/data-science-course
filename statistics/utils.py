@@ -1,11 +1,9 @@
-from typing import Tuple, List
-
 import numpy as np
 import pandas as pd
 from scipy.stats import norm, t
 
 
-def five_number_summary(values: pd.Series | np.ndarray, show: bool = False) -> Tuple[float, float, float, float, float]:
+def five_number_summary(values: pd.Series | np.ndarray, show: bool = False) -> tuple[float, float, float, float, float]:
     """
     Show the five-number summary of a given pandas Series or NumPy ndarray.
     :param values: The pandas Series to show the five-number summary.
@@ -25,7 +23,7 @@ def five_number_summary(values: pd.Series | np.ndarray, show: bool = False) -> T
     return min, q1, median, q3, max
 
 
-def confidence_interval(sample: np.ndarray, confidence_level: float = 0.95) -> Tuple[float, float]:
+def confidence_interval(sample: np.ndarray, confidence_level: float = 0.95) -> tuple[float, float]:
     """
     Compute the confidence interval for a given sample, with two distributions: normal and student.
     :param sample: The sample to compute the confidence interval.
@@ -46,7 +44,7 @@ def confidence_interval(sample: np.ndarray, confidence_level: float = 0.95) -> T
         return mean - t_value * std / np.sqrt(n), mean + t_value * std / np.sqrt(n)
 
 
-def do_intervals_overlap(interval1: Tuple[float, float], interval2: Tuple[float, float]) -> bool:
+def do_intervals_overlap(interval1: tuple[float, float], interval2: tuple[float, float]) -> bool:
     """
     Check if two intervals overlap.
     :param interval1: The first interval.
@@ -56,7 +54,7 @@ def do_intervals_overlap(interval1: Tuple[float, float], interval2: Tuple[float,
     return interval1[1] >= interval2[0] and interval1[0] <= interval2[1]
 
 
-def cohen_d(x: List[float] | np.ndarray, y: List[float] | np.ndarray) -> float:
+def cohen_d(x: list[float] | np.ndarray, y: list[float] | np.ndarray) -> float:
     """
     Compute the Cohen's d effect size between two samples.
     :param x: first sample
