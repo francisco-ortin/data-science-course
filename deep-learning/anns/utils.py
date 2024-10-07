@@ -25,7 +25,12 @@ def plot_functions(x: np.ndarray, y: np.array, y_predicted: np.array, title: str
 
 
 def show_history(history: History, loss_label: str, accuracy_label: str) -> None:
-    """Function that shows the loss and accuracy plots for a given training history"""
+    """
+    Function that shows the loss and accuracy plots for a given training history
+    :param history: Training history
+    :param loss_label: Label for the loss plot
+    :param accuracy_label: Label for the accuracy plot
+    """
     # Plot training loss
     plt.figure(figsize=(12, 4))
     plt.subplot(1, 2, 1)
