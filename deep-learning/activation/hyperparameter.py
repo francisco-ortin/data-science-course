@@ -84,14 +84,17 @@ bayesian_opt_tuner.search(X_train, y_train, epochs=10,
 
 # BEST MODEL AND HYPERPARAMETERS RETRIEVAL
 
-hyperparameters = bayesian_opt_tuner.get_best_hyperparameters(num_trials=1)[0]
+# get the first hyperparameter set in descending order of performance (the best ones)
+hyperparameters = bayesian_opt_tuner.get_best_hyperparameters()[0]
 print(f"Best hyperparameters: {hyperparameters.values}.")
 
-best_trial = bayesian_opt_tuner.oracle.get_best_trials(num_trials=1)[0]
+# get the best trial (the one with the best performance); then ge the validation accuracy
+best_trial = bayesian_opt_tuner.oracle.get_best_trials()[0]
 val_accuracy = best_trial.metrics.get_last_value("val_accuracy")
 print(f"Validation accuracy with the best hyperparameters: {val_accuracy:.4f}.")
 
-best_model = bayesian_opt_tuner.get_best_models(num_models=1)[0]
+# get the best model and evaluate it on the test set
+best_model = bayesian_opt_tuner.get_best_models()[0]
 evaluation_results = best_model.evaluate(X_test, y_test)
 print(f"Best model's loss: {evaluation_results[0]:.4f}. Best model's accuracy: {evaluation_results[1]:.4f}.")
 
