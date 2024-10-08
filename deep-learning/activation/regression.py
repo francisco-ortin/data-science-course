@@ -39,6 +39,7 @@ model = tf.keras.Sequential([
     tf.keras.layers.Dense(1)  # no activation function (regression)
 ])
 model.summary()
+
 optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
 model.compile(loss="mse", optimizer=optimizer, metrics=["RootMeanSquaredError"])
 # Model training
@@ -49,6 +50,7 @@ pd.DataFrame(history.history).plot(
     figsize=(8, 5), xlim=[1, EPOCHS + 1], ylim=[0, 1], grid=True, xlabel="Epoch",
     style=["r--", "r--.", "b-", "b-*"])  # red/blue, dashed(--), continuous (-), shape(. or *)
 plt.show()
+
 # Model evaluation
 mse_test, rmse_test = model.evaluate(X_test, y_test)
 print(f"Test MSE: {mse_test:.4f}. Test RMSE: {rmse_test:.4f}")
@@ -104,6 +106,8 @@ pd.DataFrame(history.history).plot(
     figsize=(8, 5), xlim=[1, EPOCHS + 1], ylim=[0, 1], grid=True, xlabel="Epoch",
     style=["r--", "r--.", "b-", "b-*"])  # red/blue, dashed(--), continuous (-), shape(. or *)
 plt.show()
+
+
 # Model evaluation
 mse_test, rmse_test = model.evaluate(X_test, y_test)
 print(f"Test MSE: {mse_test:.4f}. Test RMSE: {rmse_test:.4f}")
@@ -148,6 +152,7 @@ pd.DataFrame(history.history).plot(
     figsize=(8, 5), xlim=[1, EPOCHS + 1], ylim=[0, 1], grid=True, xlabel="Epoch",
     style=["r--", "r--.", "b-", "b-*"])  # red/blue, dashed(--), continuous (-), shape(. or *)
 plt.show()
+
 # Model evaluation
 mse_test, rmse_test = model.evaluate(X_test, y_test)
 print(f"Test MSE: {mse_test:.4f}. Test RMSE: {rmse_test:.4f}")
