@@ -5,14 +5,16 @@
 # transfer learning leverages the knowledge gained from training on a source domain to
 # improve performance on a target domain with limited labeled data.
 
-# We use the Xception deep CNN model introduced by François Chollet (the author or Keras) in the paper
-# "Xception: Deep Learning with Depthwise Separable Convolutions" published in 2017. It merges the ideas of
+# We use the [Xception deep CNN model](https://ieeexplore.ieee.org/document/8099678) introduced by
+# [François Chollet](https://en.wikipedia.org/wiki/Fran%C3%A7ois_Chollet) (the author or Keras) in the paper
+# _"Xception: Deep Learning with Depthwise Separable Convolutions"_ published in 2017. It merges the ideas of
 # the GoogLeNet and ResNet models, but it replaces the inception modules with a special type
 # of layer called a depth-wise separable convolution layer.
-# Xception has been trained with the ImageNet dataset, which contains millions of labeled images
+# Xception has been trained with the [ImageNet dataset](https://www.image-net.org/), which contains millions of labeled images
 # across thousands of categories.
 
-# We use a dataset of flowers of 5 different classes: dandelion, daisy, tulips, sunflowers, and roses.
+# We use the [tr_flowers dataset](https://www.tensorflow.org/datasets/catalog/tf_flowers?hl=es) from
+# TensorFlow with 5 different classes of flowers: dandelion, daisy, tulips, sunflowers, and roses.
 
 # First, Xception is loaded form disc. The last layers are not included, because they are two specific of
 # the ImageNet dataset used to train Xception. Then, we add some classifier layers for our problem,
