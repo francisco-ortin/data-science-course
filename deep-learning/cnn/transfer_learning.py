@@ -54,8 +54,10 @@ for image, label in val_raw_ds.take(9):
     plt.axis("off")
 plt.show()
 
-# we define the size of the mini-batch
-BATCH_SIZE = 32
+
+# We use keras to resize the images to 224x224 (size of Xception model)
+# and rescale the input values to be between -1 and 1
+# We can use a feed-forward layer to preprocess the images before feeding them to the model because you will benefit from the GPU acceleration (if any).
 preprocess = tf.keras.Sequential([
     # resizes the images to 224x224 (size fo Xception model)
     # aspect ratio is maintained, cropping the file, to not distortion the image
@@ -65,12 +67,17 @@ preprocess = tf.keras.Sequential([
 ])
 # resizes and rescales the input
 train_ds = train_raw_ds.map(lambda X, y: (preprocess(X), y))
+
 # Shuffles the train dataset.
+# The `batch` method collects a number of instances and groups them into a single batch. This is useful divide
+# the dataset into mini-batches so that the GPU can process them in parallel.
 # prefetch(1) prefetches one data batch at a time from the dataset iterator, ensuring that there is always one
 # batch ready to be processed by the model while the current batch is being trained. This overlapping of data
 # loading and model execution helps reduce the time spent waiting for data during training,
 # thereby improving overall training performance.
-train_ds = train_ds.shuffle(1000).batch(BATCH_SIZE).prefetch(1)
+# we define the size of the mini-batch
+BATCH_SIZE = 32
+train_ds = train_ds.shuffle(1000).batch(BATCH_SIZE)#.prefetch(1)
 val_ds = val_raw_ds.map(lambda X, y: (preprocess(X), y)).batch(BATCH_SIZE)
 test_ds = test_raw_ds.map(lambda X, y: (preprocess(X), y)).batch(BATCH_SIZE)
 
