@@ -143,10 +143,14 @@ print(f"Test loss: {evaluation_results[0]:.4f}. Test accuracy: {evaluation_resul
 # of a dataset by applying various transformations to the original images. Typical transformations are image flipping,
 # rotating and contrasting (among others).
 
-# The following `augment_dataset` takes a dataset and duplicates it with random transformations.
+# The following `augment_dataset` function takes a dataset and duplicates it with random transformations.
 
-def augment_dataset(dataset):
-    """Duplicates the dataset with augmented data (randomly flipped, rotated and contrasted)"""
+def augment_dataset(dataset: tf.data.Dataset) -> tf.data.Dataset:
+    """
+    Duplicates the dataset with augmented data (randomly flipped, rotated and contrasted)
+    :param dataset: dataset to be augmented
+    :return: augmented dataset
+    """
     data_augmentation_layer = tf.keras.Sequential([
         tf.keras.layers.RandomFlip(mode="horizontal"),
         tf.keras.layers.RandomRotation(factor=0.05),
