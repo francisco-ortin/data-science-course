@@ -171,3 +171,21 @@ def confidence_interval(data: list[float], confidence_level: float) -> tuple[flo
     )
     return mean, ci
 
+
+def plot_feature_importances(importances_p: list[list[float]], model_names_p: list[str], feature_names_p: list[str]) -> None:
+    """
+    Plot the feature importances with three different colors (one for each model), showing the feature names
+    :param importances_p: list of the feature importances of each model
+    :param model_names_p: names of the models
+    :param feature_names_p: names of the features
+    """
+    fig, ax = plt.subplots()
+    bar_width = 1 / len(model_names_p) * 0.9
+    x = np.arange(len(feature_names_p))
+    for i, ft_imports in enumerate(importances_p):
+        ax.bar(x - (i-1) * bar_width, ft_imports, bar_width, label=model_names_p[i])
+    ax.set_xticks(x)
+    ax.set_xticklabels(feature_names_p)
+    ax.legend()
+    plt.xticks(rotation=45)
+    plt.show()
