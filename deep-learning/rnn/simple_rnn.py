@@ -99,8 +99,15 @@ print("First few elements of the dataset:")
 print(train_set_p)
 
 # Batch each sequence individually (batch of 1) to allow variable-length input
-train_set_p = train_set_p.batch(1).prefetch(1)
+# (mandatory for training RNNs with variable-length sequences (not very common)).
+# At inference, any length can be used, even though the model was trained with a specific length.
+train_set_p = (train_set_p.batch(1)  # organizes the dataset into batches:
+               # adds a new dimension batch-size to the dataset, grouping elements into batches
+        # batch size is 1 to allow for variable length sequences
+               .prefetch(1))  # prefetches the next batch while training on the current batch (pipeline parallelism)
+                        # it is set to 1 to prefetch 1 batch while training on another 1 batch
 val_set_p = train_set_p
+test_set_p = train_set_p
 
 # Define the model
 model = tf.keras.Sequential([
@@ -112,9 +119,10 @@ optimizer = tf.keras.optimizers.SGD(learning_rate=0.02, momentum=0.9)
 model.compile(optimizer=optimizer, loss=tf.keras.losses.Huber(), metrics=['mae'])
 
 early_stopping_cb = tf.keras.callbacks.EarlyStopping(
-    monitor="val_mae", patience=50, restore_best_weights=True)
+    monitor="val_mae", patience=2, restore_best_weights=True)
 # Train the model without specifying batch_size (since dataset is already batched)
-history = model.fit(train_set_p, validation_data=val_set_p, epochs=500,
+history = model.fit(train_set_p, validation_data=val_set_p, epochs=50,
                     batch_size=1, callbacks=[early_stopping_cb])
 
-
+test_loss, test_mae = model.evaluate(train_set_p)
+print(f"Test MAE: {scaler.inverse_transform([[test_mae]])[0][0]:.0f}")
