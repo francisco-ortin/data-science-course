@@ -17,35 +17,56 @@ import numpy as np
 
 ## LOAD THE DATA
 
-dataset = pd.read_csv('data/transit.csv', parse_dates=['service_date'])  # parse_dates converts the column to datetime
-# we will use the number of passengers for the train as the target variable, so bus and total_rides columns are not necessary
-dataset = dataset.drop(columns=['bus', 'total_rides'])
-# rename the rail_boardings column to rail and the service_date column to date
-dataset = dataset.rename(columns={"rail_boardings": "rail", "service_date": "date"})
-# remove duplicates
-dataset = dataset.drop_duplicates()
-# sort by date (ascending) and set the date as the index of the dataframe
-dataset = dataset.sort_values("date").set_index("date")
+def load_dataset(file_name: str) -> pd.DataFrame:
+    """
+    Load the dataset from the CSV file
+    :param file_name: the path to the CSV file
+    :return: the dataset
+    """
+    ds = pd.read_csv(file_name, parse_dates=['service_date'])  # parse_dates converts the column to datetime
+    # we will use the number of passengers for the train as the target variable, so bus and total_rides columns are not necessary
+    ds = ds.drop(columns=['bus', 'total_rides'])
+    # rename the rail_boardings column to rail and the service_date column to date
+    ds = ds.rename(columns={"rail_boardings": "rail", "service_date": "date"})
+    # remove duplicates
+    ds = ds.drop_duplicates()
+    # sort by date (ascending) and set the date as the index of the dataframe
+    ds = ds.sort_values("date").set_index("date")
+    return ds
+
+
+dataset = load_dataset("data/transit.csv")
 # display the first few rows of the dataset
 print("First few rows of the dataset:")
 print(dataset.head())
 
 
 # Let's plot the number of train passengers for the first semester months of 2001
-#dataset["2001-01":"2001-06"].plot(grid=True, marker=".", figsize=(12, 3.5))
-#plt.show()
+dataset["2001-01":"2001-06"].plot(grid=True, marker=".", figsize=(12, 3.5))
+plt.show()
 
 # The default activation function for the RNN is the hyperbolic tangent (tanh) function,
 # which outputs values between -1 and 1. A simple RNN uses the output as part of the input for the next time step.
 # Therefore, we need to scale the data to be between -1 and 1. We use the MinMaxScaler from scikit-learn to scale the data.
 
-# Scale the data
-scaler = MinMaxScaler(feature_range=(-1, 1))
-dataset['rail'] = scaler.fit_transform(dataset[['rail']])
-# convert the date_type column to a one-hot encoded column
-dataset = pd.get_dummies(dataset, columns=["day_type"])
-# map True to 1 and False to 0
-dataset = dataset.astype({"day_type_A": int, "day_type_U": int, "day_type_W": int})
+
+def scale_data_and_convert_one_hot(dataset_p: pd.DataFrame) -> (pd.DataFrame, MinMaxScaler):
+    """
+    Scale the data between -1 and 1 and convert the day_type column to one-hot encoding
+    :param dataset_p: the dataset
+    :return: the scaled dataset
+    """
+    # Scale the data
+    scaler = MinMaxScaler(feature_range=(-1, 1))
+    dataset_p['rail'] = scaler.fit_transform(dataset_p[['rail']])
+    # convert the date_type column to a one-hot encoded column
+    dataset_p = pd.get_dummies(dataset_p, columns=["day_type"])
+    # map True to 1 and False to 0
+    dataset_p = dataset_p.astype({"day_type_A": int, "day_type_U": int, "day_type_W": int})
+    return dataset_p, scaler
+
+
+dataset, scaler = scale_data_and_convert_one_hot(dataset)
 print("First few rows of the dataset after scaling and one-hot encoding:")
 print(dataset.head())
 
@@ -81,15 +102,12 @@ X_val, y_val = create_variable_time_series_dataset(val_ds, length_from, length_t
 X_test, y_test = create_variable_time_series_dataset(test_ds, length_from, length_to)
 
 
-# Select sequences of random length between 30 and 60 days using tf.keras.utils.timeseries_dataset_from_array
-
-
 def X_y_to_tensor_slices(X_p: list, y_p: list) -> tf.data.Dataset:
     # Convert to TensorFlow Dataset
     return tf.data.Dataset.from_generator(
         lambda: zip(X_p, y_p),
         output_signature=(
-            tf.TensorSpec(shape=(None, 4), dtype=tf.float32),  # X has shape [None, 5]: None for variable sequence length, and 5 for the number of features in each timestep
+            tf.TensorSpec(shape=(None, 4), dtype=tf.float32),  # X has shape [None, 4]: None for variable sequence length, and 4 for the number of features in each timestep
             tf.TensorSpec(shape=(), dtype=tf.float32)          # y is a scalar
         )
     )
@@ -123,14 +141,31 @@ def train_model(model: Model, train_set_p: tf.data.Dataset, val_set_p: tf.data.D
     # huber loss is less is useful for time series data
     model.compile(optimizer=optimizer, loss=tf.keras.losses.Huber(), metrics=['mae', 'mape'])
     early_stopping_cb = tf.keras.callbacks.EarlyStopping(
-        monitor="val_mae", patience=5, restore_best_weights=True)
+        monitor="val_mae", patience=2, restore_best_weights=True)
     history = model.fit(train_set_p, validation_data=val_set_p, epochs=epochs,
                         batch_size=1, callbacks=[early_stopping_cb])
     return history
 
 
-epochs = 1
-train_model(simple_model, train_set_tf, val_set_tf, learning_rate=0.01, epochs=epochs)
+epochs = 500
+history = train_model(simple_model, train_set_tf, val_set_tf, learning_rate=0.01, epochs=epochs)
+
+
+def plot_history(history_p: tf.keras.callbacks.History) -> None:
+    """
+    Plot the loss and the mean absolute error (MAE) for the training and validation sets
+    :param history_p: the training history
+    """
+    plt.plot(history_p.history['loss'], label='Training loss')
+    plt.plot(history_p.history['val_loss'], label='Validation loss')
+    plt.title('Model loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.show()
+
+
+plot_history(history)
 test_loss, test_mae, test_mape = simple_model.evaluate(test_set_tf)
 # The test MAE is scaled, so we need to inverse the scaling to get the actual value.
 # Since the output is a 2d array (bath_size, y features), we need to select the first element of the first element of the array.
@@ -143,10 +178,11 @@ def plot_predictions(y_test_p: np.array, y_pred_p: np.array, n_instances: int):
     Plot the first 100 instances of y_pred vs y_test
     :param y_test_p: the true values
     :param y_pred_p: the predicted values
+    :param n_instances: the number of instances to plot
     """
     plt.figure(figsize=(12, 3.5))
-    plt.plot(y_test_p[:n_instances], label="True values")
-    plt.plot(y_pred_p[:n_instances], label="Predicted values")
+    plt.plot(y_test_p[:n_instances], marker=".", label="True values")
+    plt.plot(y_pred_p[:n_instances], marker=".", label="Predicted values")
     plt.legend()
     plt.show()
 
@@ -168,7 +204,8 @@ multi_model = tf.keras.Sequential([
 ])
 print(multi_model.summary())
 
-train_model(multi_model, train_set_tf, val_set_tf, learning_rate=0.01, epochs=epochs)
+history = train_model(multi_model, train_set_tf, val_set_tf, learning_rate=0.01, epochs=epochs)
+plot_history(history)
 test_loss, test_mae, test_mape = multi_model.evaluate(test_set_tf)
 print(f"Test MAE: {scaler.inverse_transform([[test_mae]])[0][0]:.0f}.")
 print(f"Test MAPE: {test_mape:.2f}.")
@@ -196,7 +233,8 @@ deep_model = tf.keras.Sequential([
 ])
 print(deep_model.summary())
 
-train_model(deep_model, train_set_tf, val_set_tf, learning_rate=0.01, epochs=epochs)
+history = train_model(deep_model, train_set_tf, val_set_tf, learning_rate=0.01, epochs=epochs)
+plot_history(history)
 test_loss, test_mae, test_mape = deep_model.evaluate(test_set_tf)
 print(f"Test MAE: {scaler.inverse_transform([[test_mae]])[0][0]:.0f}.")
 print(f"Test MAPE: {test_mape:.2f}.")
@@ -207,6 +245,9 @@ plot_predictions(y_test, y_pred, n_instances_to_plot)
 
 ## QUESTIONS:
 # 1. Are model preformed being improved by adding more complexity/parameters?
+# Answer: No, the sencond model performs better, but no the third one..
+# EN EL TERCER MODELO EL LOSS DE TRAIN BAJA MUCHÍSIMO, PERO EL DE VALIDACIÓN SUBE TRAS EL PRIMER EPOCH (SOBREAJUSTE)
 # 2. Why?
 # 3. Do you think that will always be the case?
+# No, it depends on the data and the model. In this case, the third model is overfitting the data (too cmplex).
 
