@@ -200,5 +200,25 @@ def display_digits_with_boxes(digits: np.array, predictions: np.array, labels: n
         plt.imshow(img_to_draw)
 
 
+# some images for image classification
+image_URLs = [
+   'https://images.unsplash.com/photo-1560807707-8cc77767d783',
+   'https://images.unsplash.com/photo-1518709268805-4e9042af9f23',
+   'https://images.unsplash.com/photo-1552519507-da3b142c6e3d',
+   'https://images.unsplash.com/photo-1527549993586-dff825b37782',
+   'https://images.unsplash.com/photo-1555041469-a586c61ea9bc',
+   'https://images.unsplash.com/photo-1517336714731-489689fd1ca8',
+   'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9',
+   'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce',
+   'https://images.unsplash.com/photo-1546069901-ba9599a7e63c',
+   'https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0',
+   'https://images.unsplash.com/photo-1507525428034-b723cf961d3e',
+   'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee'
+    ]
 
 
+plane_image_URLS = [
+    'https://irp.cdn-website.com/e346530e/dms3rep/multi/airplanes.png',
+    'https://images.stockcake.com/public/9/9/4/994c4c96-99ca-4cce-90ce-74a714af9f4a_large/sky-high-traffic-stockcake.jpg',
+    'https://www.travelandleisure.com/thmb/Nq9fBPWYGxNEmUvkK3P1b96F7XU=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/composite-heathrow-airport-PLANEINSKY0322-f4e3d471b6b64c84bb297e5e7347076e.jpg'
+    ]
