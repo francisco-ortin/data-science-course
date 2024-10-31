@@ -3,6 +3,8 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import tensorflow_datasets as tfds
+from PIL import Image
+import matplotlib.patches as mpatches
 
 
 def _read_image_tfds(image: tf.Tensor, label: tf.Tensor) -> (tf.Tensor, (tf.Tensor, tf.Tensor)):
@@ -200,25 +202,38 @@ def display_digits_with_boxes(digits: np.array, predictions: np.array, labels: n
         plt.imshow(img_to_draw)
 
 
-# some images for image classification
-image_URLs = [
-   'https://images.unsplash.com/photo-1560807707-8cc77767d783',
-   'https://images.unsplash.com/photo-1518709268805-4e9042af9f23',
-   'https://images.unsplash.com/photo-1552519507-da3b142c6e3d',
-   'https://images.unsplash.com/photo-1527549993586-dff825b37782',
-   'https://images.unsplash.com/photo-1555041469-a586c61ea9bc',
-   'https://images.unsplash.com/photo-1517336714731-489689fd1ca8',
-   'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9',
-   'https://images.unsplash.com/photo-1567306226416-28f0efdc88ce',
-   'https://images.unsplash.com/photo-1546069901-ba9599a7e63c',
-   'https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0',
-   'https://images.unsplash.com/photo-1507525428034-b723cf961d3e',
-   'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee'
-    ]
+def plot_image_segmentation(segmentation_prediction_p: np.ndarray, image_p: Image, class_labels_p: dict[int, str],
+                            color_mapping_p: dict[int, tuple[int, int, int]]) -> None:
+    """
+    Function to plot the original image and the segmentation map with a legend
+    :param segmentation_prediction_p: the segmentation prediction undertaken by the model
+    :param image_p: the original image
+    :param class_labels_p: the labels for each class
+    :param color_mapping_p: the color mapping for each class
+    """
+    # Map the class IDs in the segmentation output to RGB colors
+    segmentation_rgb = np.zeros((segmentation_prediction_p.shape[0], segmentation_prediction_p.shape[1], 3),
+                                dtype=np.uint8)
+    for class_id, color in color_mapping_p.items():
+        segmentation_rgb[segmentation_prediction_p == class_id] = color
 
+    # Plot the original image (left) and segmentation map with legend (right)
+    fig, axes = plt.subplots(1, 2, figsize=(15, 8))
 
-plane_image_URLS = [
-    'https://irp.cdn-website.com/e346530e/dms3rep/multi/airplanes.png',
-    'https://images.stockcake.com/public/9/9/4/994c4c96-99ca-4cce-90ce-74a714af9f4a_large/sky-high-traffic-stockcake.jpg',
-    'https://www.travelandleisure.com/thmb/Nq9fBPWYGxNEmUvkK3P1b96F7XU=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/composite-heathrow-airport-PLANEINSKY0322-f4e3d471b6b64c84bb297e5e7347076e.jpg'
-    ]
+    # Display original image
+    axes[0].imshow(image_p)
+    axes[0].axis("off")
+    axes[0].set_title("Original Image")
+
+    # Display segmented image with legend
+    axes[1].imshow(segmentation_rgb)
+    axes[1].axis("off")
+    axes[1].set_title("Segmented Image")
+
+    # Add a legend using matplotlib patches for each class, positioned outside the image
+    legend_patches = [mpatches.Patch(color=np.array(color) / 255, label=label)
+                      for label, color in zip(class_labels_p.values(), color_mapping_p.values())]
+
+    plt.legend(handles=legend_patches, loc="center left", bbox_to_anchor=(1.05, 0.5), title="Classes")
+    plt.tight_layout()
+    plt.show()

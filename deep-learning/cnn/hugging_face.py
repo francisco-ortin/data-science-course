@@ -4,7 +4,7 @@ from PIL import Image
 import requests
 import matplotlib.pyplot as plt
 
-from utils import image_URLs
+import images
 
 # pip install transformers
 
@@ -18,12 +18,12 @@ from utils import image_URLs
 # Load feature extractor and model
 
 
-'''resnet_model_name = "microsoft/resnet-50"
+resnet_model_name = "microsoft/resnet-50"
 img_feature_extractor = AutoFeatureExtractor.from_pretrained(resnet_model_name)
 resnest_model = TFAutoModelForImageClassification.from_pretrained(resnet_model_name)
 
 
-for url in image_URLs:
+for url in images.image_URLs:
     # Preprocess the image
     image = Image.open(requests.get(url, stream=True).raw)
     inputs = img_feature_extractor(images=image, return_tensors="tf")
@@ -42,7 +42,6 @@ for url in image_URLs:
     plt.title(label)
     plt.axis("off")
     plt.show()
-'''
 
 ## Object detection
 
@@ -51,9 +50,9 @@ for url in image_URLs:
 
 # pip install ultralyticsplus==0.0.23 ultralytics==8.0.21
 from ultralyticsplus import YOLO, render_result
-from utils import plane_image_URLS
+import images
 
-"""
+
 # load model
 model = YOLO('keremberke/yolov8m-plane-detection')
 
@@ -64,7 +63,7 @@ model.overrides['agnostic_nms'] = False  # NMS class-agnostic means that the NMS
 model.overrides['max_det'] = 1000  # maximum number of detections per image
 
 
-for image_URL in plane_image_URLS:
+for image_URL in images.plane_image_URLS:
     # perform inference
     results = model.predict(image_URL)
     image = Image.open(requests.get(image_URL, stream=True).raw)
@@ -75,58 +74,49 @@ for image_URL in plane_image_URLS:
         plt.plot([x1, x2, x2, x1, x1], [y1, y1, y2, y2, y1], color='red', lw=2)
     plt.axis("off")
     plt.show()
-"""
+
+## Image segmentation
+
+# Image segmentation is a computer vision technique that involves dividing an image into multiple segments or regions, making it easier to analyze and process. The goal is to simplify the representation of an image by identifying and isolating objects or areas of interest within it. Each segment, region or pixel is assigned a unique label, allowing for easier interpretation and analysis of the image.
+
+# Image segmentation is used in a variety of applications across different fields, including medical imaging (e.g., organ and tumor detection in RMI images), autonomous vehicles (e.g., object detection and tracking), satellite imaging (e.g., smoke detection in forest fires), and augmented reality (e.g., object recognition and tracking).
+
+# Image segmentation can be performed using a variety of techniques, including CNNs (Convolutional Neural Networks).
+# In this example, we will use a model for image segmentation using the [Segformer architecture](https://huggingface.co/docs/transformers/model_doc/segformer).
+# The [`mattmdjaga/segformer_b2_clothes`](https://huggingface.co/mattmdjaga/segformer_b2_clothes) model is fine-tuned on
+# the [ATR dataset](https://github.com/lemondan/HumanParsing-Dataset) for clothes segmentation but can also be used for human segmentation.
+# It detects the following 18 classes and segments the image accordingly: Background, Hat, Hair, Sunglasses, Upper-clothes, Skirt, Pants, Dress, Belt, Left-shoe, Right-shoe, Face, Left-leg, Right-leg, Left-arm, Right-arm, Bag, Scarf.
 
 
-
-import tensorflow as tf
-from transformers import TFSegformerForSemanticSegmentation, SegformerFeatureExtractor
-import numpy as np
+from transformers import SegformerImageProcessor, AutoModelForSemanticSegmentation
 from PIL import Image
 import requests
+import torch.nn as nn
 
-# Load a pre-trained SegFormer model and feature extractor
-model_name = "nvidia/segformer-b0-finetuned-ade-512-512"  # Pre-trained model on ADE20k dataset
-model = TFSegformerForSemanticSegmentation.from_pretrained(model_name)
-feature_extractor = SegformerFeatureExtractor.from_pretrained(model_name)
+import images
+import utils
 
-# Define a function for loading and preprocessing the image
-def load_and_preprocess_image(image_url):
-    response = requests.get(image_url)
-    image = Image.open(response.raw).convert("RGB")
-    
-    # Preprocess the image
-    inputs = feature_extractor(images=image, return_tensors="tf")
-    return image, inputs
+# model_name from Hugging Face
+model_name = 'mattmdjaga/segformer_b2_clothes'
+# the processor takes an input image and returns a tensor
+processor = SegformerImageProcessor.from_pretrained(model_name)
+# load the model performs the segmentation
+model = AutoModelForSemanticSegmentation.from_pretrained(model_name)
 
-# Define a function to post-process the model output to create segmentation mask
-def post_process_segmentation(outputs, target_size=(512, 512)):
-    # Get the predicted segmentation mask
-    logits = outputs.logits
-    upsampled_logits = tf.image.resize(logits, target_size, method="bilinear")
-    predicted_mask = tf.argmax(upsampled_logits, axis=-1)[0]
-    return predicted_mask
-
-# Load and preprocess the image
-image_url = "https://example.com/path/to/your/image.jpg"
-image, inputs = load_and_preprocess_image(image_url)
-
-# Run the model
-outputs = model(**inputs)
-
-# Post-process the output to get the segmentation mask
-segmentation_mask = post_process_segmentation(outputs, target_size=image.size)
-
-# Display the results
-import matplotlib.pyplot as plt
-
-plt.figure(figsize=(10, 5))
-plt.subplot(1, 2, 1)
-plt.imshow(image)
-plt.title("Original Image")
-
-plt.subplot(1, 2, 2)
-plt.imshow(segmentation_mask, cmap="jet", interpolation="nearest")
-plt.title("Segmentation Mask")
-plt.show()
-
+# process each image in the list
+for image_url in images.segmentation_image_URLs:
+    # get the input features from the image
+    image = Image.open(requests.get(image_url, stream=True).raw)
+    inputs = processor(images=image, return_tensors="pt")
+    # perform segmentation with the model
+    outputs = model(**inputs)
+    logits = outputs.logits  # get the logits (probabilities for each class) from the output
+    # We take the output of the CNN and upsample it to the original image size.
+    # That is, we resize the output to the original image size, because the CNN output is smaller than the input image.
+    # We use bilinear interpolation to upsample the logits.
+    # Then, we will get, for each pixel, the class with the highest probability.
+    upsampled_logits = nn.functional.interpolate(logits, size=image.size[::-1], mode="bilinear", align_corners=False)
+    # we take the class with the highest probability for each pixel
+    segmentation_prediction = upsampled_logits.argmax(dim=1)[0].numpy()
+    # Plot the original image and the segmentation mask
+    utils.plot_image_segmentation(segmentation_prediction, image, images.class_labels, images.color_mapping)
