@@ -24,7 +24,7 @@ The course has the following contents:
 8. [Deep learning](deep-learning).
    - Introduction.
    - Artificial neural networks.
-     - [Perceptron neural network for regression](anns/iris_regression.iypnb).
+     - [Perceptron neural network for regression](deep-learning/anns/iris_regression.iypnb).
      - [Perceptron for binary classification](anns/iris_single_classifier.ipynb).
      - [Perceptron for multiclass classification](anns/iris_multiple_classifier.ipynb).
      - [TensorFlow for estimate any differentiable function from data](anns/function_estimation.ipynb).
