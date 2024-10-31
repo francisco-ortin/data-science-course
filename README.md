@@ -15,13 +15,13 @@ at the [University of Oviedo](https://www.uniovi.es).
 The course has the following contents:
 
 1. Introduction to data science.
-2. Data processing and visualization.
-3. Statistical foundations.
+2. [Data processing and visualization](data-proc-visual).
+3. [Statistical foundations](statistics).
 4. Machine learning.
-5. Regression.
-6. Classification.
-7. Unsupervised learning.
-8. Deep learning.
+5. [Regression](regression).
+6. [Classification](classification).
+7. [Unsupervised learning](unsupervised).
+8. [Deep learning](deep-learning).
 
 
 ## License
