@@ -12,39 +12,103 @@ at the [University of Oviedo](https://www.uniovi.es).
 
 ## Table of contents
 
-The course has the following contents:
+The course has the following contents (click on the links to access the supporting material):
 
 1. Introduction to data science.
+   - What is dat science?
+   - Key components of data science.
+   - Applications of data science.
+   - Data analysis.
+   - Types of data analyses.
 2. [Data processing and visualization](data-proc-visual).
+   - Introduction.
+   - Data processing.
+   - [NumPy](data-proc-visual/numpy.ipynb).
+   - [Pandas](data-proc-visual/pandas.ipynb).
+   - Data visualization.
+   - Convey true messages.
+   - [Matplotlib and Seaborn](data-proc-visual/visualization.ipynb).
 3. [Statistical foundations](statistics).
+   - Introduction.
+   - Descriptive statistics.
+     - [Label and one-hot encoding](statistics/encoding.ipynb).
+     - [Central tendency](statistics/central.ipynb).
+     - [Dispersion](statistics/dispersion.ipynb).
+     - [Scaling and normalization](statistics/scaling_normalization.ipynb).
+     - [Treating missing values](statistics/missing.ipynb).
+     - [Correlation](statistics/correlation.ipynb).
+   - Probability.
+     - [Central limit theorem](statistics/central_limit.ipynb).
+   - Statistical inference.
+     - [Confidence intervals](statistics/confidence_intervals.ipynb).
+     - [Hypothesis testing](statistics/hypothesis.ipynb).
 4. Machine learning.
+    - Introduction to machine learning.
+    - Supervised machine learning.
+    - Unsupervised machine learning.
+    - Models, parameters and hyperparameters.
+    - Explainability and interpretability.
 5. [Regression](regression).
-6. [Classification](classification).
+    - Linear regression.
+    - Cost function.
+      - [Simple linear regression with Scikit-Learn](regression/linear_regression.ipynb).
+    - Gradient descent.
+      - [Gradient descent](regression/gradient_descent.ipynb).
+      - [Learning rate](regression/learning_rate.ipynb).
+      - [Batch, stochastic and mini-batch gradient descent](regression/mini_batch.ipynb).
+    - Multiple linear regression.
+      - [Multiple linear regression](regression/multiple_linear_regression.ipynb).
+    - Polynomial regression.
+      - [Polynomial regression](regression/polynomial_regression.ipynb).
+    - Bias vs. variance.
+      - [Choosing the appropriate model complexity](regression/validation.ipynb).
+    - Reducing overfitting.
+      - [Regularization](regression/regularization.ipynb).
+7. [Classification](classification).
+    - Introduction.
+    - Logistic regression.
+      - [Logistic regression](classification/logistic.ipynb).
+    - Performance metrics.
+      - [Classification metrics](classification/metrics.ipynb).
+    - Decision trees.
+      - [Decision trees](classification/decision_tree.ipynb).
+    - Ensemble methods.
+      - [Ensemble methods and model's performance comparison](classification/ensemble.ipynb).
 7. [Unsupervised learning](unsupervised).
+   - Introduction.
+   - Dimensionality reduction.
+     - [PCA and t-SNE](unsupervised/pca.ipynb).
+   - Clustering.
+     - [K-means](unsupervised/k_means.ipynb).
+     - [Customer segmentation](unsupervised/customers.ipynb).
+   - Anomaly detection.
+     - [Variable analysis, Tukey's fences and isolation forest](unsupervised/anomaly.ipynb).
 8. [Deep learning](deep-learning).
    - Introduction.
    - Artificial neural networks.
-     - [Perceptron neural network for regression](deep-learning/anns/iris_regression.iypnb).
-     - [Perceptron for binary classification](anns/iris_single_classifier.ipynb).
-     - [Perceptron for multiclass classification](anns/iris_multiple_classifier.ipynb).
-     - [TensorFlow for estimate any differentiable function from data](anns/function_estimation.ipynb).
+     - [Perceptron neural network for regression](deep-learning/anns/iris_regression.ipynb).
+     - [Perceptron for binary classification](deep-learning/anns/iris_single_classifier.ipynb).
+     - [Perceptron for multiclass classification](deep-learning/anns/iris_multiple_classifier.ipynb).
+     - [TensorFlow and Keras to estimate any differentiable function from data](deep-learning/anns/function_estimation.ipynb).
    - Multilayer perceptron.
-     - [The XOR problem](mlp/xor_perceptron.ipynb).
-     - [Multilayer perceptron for the XOR problem](mlp/xor_mlp.ipynb).
+     - [The XOR problem](deep-learning/mlp/xor_perceptron.ipynb).
+     - [Multilayer perceptron for the XOR problem](deep-learning/mlp/xor_mlp.ipynb).
    - Backpropagation.
    - Activation functions.
-     - [Multiclass image classification](activation/image_classifier.ipynb). 
-     - [Early stopping](activation/early_stopping.ipynb). 
-     - [Different Keras APIs](activation/regression.ipynb). 
-     - [Hyperparameter tunning/optimization](activation/hyperparameter.ipynb). 
+     - [Multiclass image classification](deep-learning/activation/image_classifier.ipynb). 
+     - [Early stopping](deep-learning/activation/early_stopping.ipynb). 
+     - [Different Keras APIs](deep-learning/activation/regression.ipynb). 
+     - [Hyperparameter tunning/optimization](deep-learning/activation/hyperparameter.ipynb). 
    - Convolutional neural networks.
-     - [Stacking convolution, padding and dense layers](cnn/cnn_architecture.ipynb). 
-     - [Transfer learning and data augmentation](cnn/transfer_learning.ipynb). 
-     - [Object detection with multiple outputs (multilabel)](cnn/object_detection.ipynb). 
-     - [Pretrained deep models from Hugging Face](cnn/hugging_face.ipynb). 
+     - [Stacking convolution, padding and dense layers](deep-learning/cnn/cnn_architecture.ipynb). 
+     - [Transfer learning and data augmentation](deep-learning/cnn/transfer_learning.ipynb). 
+     - [Object detection with multiple outputs (multilabel)](deep-learning/cnn/object_detection.ipynb). 
+     - [Pretrained deep models from Hugging Face](deep-learning/cnn/hugging_face.ipynb). 
    - Sequence models.
-     - [Simple and stacked RNN layers for time series prediction](rnn/simple_rnn.ipynb). 
+     - [Simple and stacked RNN layers for time series prediction](deep-learning/rnn/simple_rnn.ipynb). 
 
+
+Notice that this website only contains the Jupyter Notebooks of the course. That represents a small part of the course material. For any other information about the course, please contact [Francisco Ortin](https://www.reflection.uniovi.es/ortin/).
 
 ## License
 
