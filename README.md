@@ -105,7 +105,8 @@ The course has the following contents (click on the links to access the supporti
      - [Object detection with multiple outputs (multilabel)](deep-learning/cnn/object_detection.ipynb). 
      - [Pretrained deep models from Hugging Face](deep-learning/cnn/hugging_face.ipynb). 
    - Sequence models.
-     - [Simple and stacked RNN layers for time series prediction](deep-learning/rnn/simple_rnn.ipynb). 
+     - [Simple, multiple and deep RNN layers for time series prediction](deep-learning/rnn/simple_rnn.ipynb). 
+     - [LSTM and GRU units](deep-learning/rnn/lstm_gru.ipynb).
 
 
 Notice that this website only contains the Jupyter Notebooks of the course. That represents a small part of the course material. For any other information about the course, please contact [Francisco Ortin](https://www.reflection.uniovi.es/ortin/).
