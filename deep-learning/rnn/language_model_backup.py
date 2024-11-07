@@ -35,7 +35,7 @@ with io.open(path, encoding="utf-8") as f:
 text = text.replace("\n", " ")  # We remove newlines chars for nicer display
 """
 
-train_text = "import KKK\nimport keras\nimport numpy as np\nimport pandas as pd\n"*1000
+train_text = "import KKK\nimport keras\nimport numpy as np\nimport pandas as pd\n"*100
 
 
 #print(f"Corpus length: train={len(train_text):,}, val={len(val_text):,}, test={len(test_text):,}.")
@@ -47,12 +47,13 @@ char_to_index = dict((char, index) for index, char in enumerate(vocabulary_chars
 index_to_char = dict((index, char) for index, char in enumerate(vocabulary_chars))
 
 # cut the text in sequences of max_seq_length characters
-max_seq_length = 40
+lines = [line + "\n" for line in train_text.splitlines()]
 input_sequences = []
 output_chars = []
-for sequence_index in range(0, len(train_text) - max_seq_length):
-    input_sequences.append(train_text[sequence_index: sequence_index + max_seq_length])
-    output_chars.append(train_text[sequence_index + max_seq_length])
+for line in lines:
+    for char_index_in_line in range(1, len(line)):
+        input_sequences.append(line[:char_index_in_line])
+        output_chars.append(line[char_index_in_line])
 print(f"Number of input sequences: {len(input_sequences):,}.")
 print(f"Number of output chars: {len(output_chars):,}.")
 
@@ -70,7 +71,7 @@ for sequence_index, input_sequence in enumerate(input_sequences):
     y_train_ds[sequence_index, char_to_index[output_chars[sequence_index]]] = 1
 
 model = keras.Sequential([
-        keras.Input(shape=(max_seq_length, len(vocabulary_chars))),
+        keras.Input(shape=(None, len(vocabulary_chars))),
         layers.LSTM(128),
         layers.Dense(len(vocabulary_chars), activation="softmax"),
     ]
@@ -99,7 +100,7 @@ def sample(predictions: np.array, temperature: float = 1.0) -> int:
     return np.argmax(probas)
 
 
-epochs = 1  # 40
+epochs = 3  # 40
 batch_size = 128
 
 model.fit(X_train_ds, y_train_ds, batch_size=batch_size, epochs=epochs)
@@ -111,11 +112,12 @@ for temperature in [0.5, 1.0, 1.2]:
     generated = ""
     input_sequence = train_text[start_index: start_index + max_seq_length]
     input_sequence = train_text[:max_seq_length]
+    input_sequence = "i"
     original_input_sequence = input_sequence
     print('Generating with seed: "' + input_sequence + '"')
 
     for sequence_index in range(20):
-        x_pred = np.zeros((1, max_seq_length, len(vocabulary_chars)))
+        x_pred = np.zeros((1, len(input_sequence), len(vocabulary_chars)))
         for char_index, input_char in enumerate(input_sequence):
             x_pred[0, char_index, char_to_index[input_char]] = 1.0
         preds = model.predict(x_pred, verbose=0)[0]
