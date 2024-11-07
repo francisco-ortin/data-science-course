@@ -22,7 +22,6 @@ index_to_char = {index: char for index, char in enumerate(vocabulary_chars)}
 
 # cut the text in sequences of max_seq_length characters
 lines = [line + "\n" for line in train_text.splitlines()]
-random.shuffle(lines)
 input_sequences = []
 output_chars = []
 for line in lines:
@@ -35,6 +34,11 @@ for line in lines:
         output_chars.append(output_char)
         if output_char == '\n':
             break
+
+# shuffle the input sequences and the corresponding output chars
+zipped_sequences = list(zip(input_sequences, output_chars))
+random.shuffle(zipped_sequences)
+input_sequences, output_chars = zip(*zipped_sequences)
 
 print(f"Number of input sequences: {len(input_sequences):,}.")
 print(f"Number of output chars: {len(output_chars):,}.")
