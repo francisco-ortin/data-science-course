@@ -96,26 +96,6 @@ optimizer = keras.optimizers.RMSprop(learning_rate=0.01)
 language_model.compile(loss="categorical_crossentropy", optimizer=optimizer)
 
 
-def sample(predictions: np.array, temperature: float = 1.0) -> int:
-    """
-    Helper function to sample an index from a probability array
-    :param predictions: the array of probabilities predicted by the model (softmax output)
-    :param temperature: the temperature to apply to the probabilities (1=original, <1=conservative, >1=creative)
-    :return: the index of the selected character
-    """
-    # convert to float64 to avoid numerical issues
-    predictions = np.asarray(predictions).astype("float64")
-    # modify the probabilities according to the temperature
-    # calculate the log of the probabilities and divide by the temperature
-    predictions = np.log(predictions) / temperature
-    # apply the softmax function (exp(x) / sum(exp(x))) to the modified probabilities
-    exp_predictions = np.exp(predictions)
-    predictions = exp_predictions / np.sum(exp_predictions)
-    probas = np.random.multinomial(1, predictions, 1)  # probabilities after softmax (and temperature application)
-    # return the index of the maximum value (the selected character)
-    return np.argmax(probas)
-
-
 
 # if we have a model, we load it from disk, otherwise we train it
 if os.path.exists(model_file_name):
@@ -138,6 +118,26 @@ def prepare_input_text_to_one_hot(input_text_p: str) -> np.array:
     for char_index, sequence_char in enumerate(input_text_p):
         x_to_predict[0, char_index, char_to_index[sequence_char]] = 1.0
     return x_to_predict
+
+
+def sample(predictions: np.array, temperature_p: float = 1.0) -> int:
+    """
+    Helper function to sample an index from a probability array
+    :param predictions: the array of probabilities predicted by the model (softmax output)
+    :param temperature_p: the temperature to apply to the probabilities (1=original, <1=conservative, >1=creative)
+    :return: the index of the selected character
+    """
+    # convert to float64 to avoid numerical issues
+    predictions = np.asarray(predictions).astype("float64")
+    # modify the probabilities according to the temperature
+    # calculate the log of the probabilities and divide by the temperature
+    predictions = np.log(predictions) / temperature_p
+    # apply the softmax function (exp(x) / sum(exp(x))) to the modified probabilities
+    exp_predictions = np.exp(predictions)
+    predictions = exp_predictions / np.sum(exp_predictions)
+    probas = np.random.multinomial(1, predictions, 1)  # probabilities after softmax (and temperature application)
+    # return the index of the maximum value (the selected character)
+    return np.argmax(probas)
 
 
 def generate_text(starting_text_p: str, model_p: Model, temperature_p: float = 1.0) -> str:
@@ -170,6 +170,16 @@ for starting_text in starting_text_fragments:
         print("Generated text: ", generate_text(starting_text, language_model, temperature))
         print("-" * 80)
 
+## Questions:
+# 1. Is the generated text different for different temperatures?
+# Answer: Yes.
+# 2. How?
+# Answer: Low temperatures generate more "conservative" text, while high temperatures generate more "creative" text.
+# 3. Why?
+# Answer: Because the temperature parameter controls the randomness of the predictions.
+# A low temperature results in more deterministic predictions, because it gives more likelihood to higher probabilietes obtained in the softmax output
+# while a high temperature results in more random predictions, because it makes probabilities to be more uniform (equal).
+
 
 
 print("Probabilities of the first characters in the vocabulary:")
@@ -182,7 +192,7 @@ for character in sorted_characters:
 
 
 ## Questions:
-# 1. After all the information shown, do you have any idea that could be useful to improve the model?
+# 4. After all the information shown, do you have any idea that could be useful to improve the model?
 # Answer: There are many characters thar are barely used in the text. That makes the vocubulary size bigger than it should be, implying more parameters.
 # If we replace those characters with OOV, the model will be simpler, faster to train and probably more accurate.
 
@@ -210,12 +220,12 @@ print("Probability of 'hi, dude' in the text: ", compute_probability_of_text("hi
 
 
 ## Questions
-# 2. Is 'hello world' more probable than 'hola mundo' in the text? Why?
+# 5. Is 'hello world' more probable than 'hola mundo' in the text? Why?
 # Answer: The probability of 'hello world' is higher than the probability of 'hola mundo' in the text because the text is in English and the model was trained on English text. The model has learned the patterns of the English language, so it assigns higher probabilities to English words and sequences of characters. Since 'hello world' is an English phrase, it is more likely to occur in the text than 'hola mundo', which is in Spanish. The model assigns lower probabilities to Spanish words and sequences of characters because it has not been trained on Spanish text. Therefore, the probability of 'hello world' is higher than the probability of 'hola mundo' in the text.
-# 3. What is the probability of 'hi dude?' lower than the probability of 'hello world'?
+# 6. What is the probability of 'hi dude?' lower than the probability of 'hello world'?
 # Answer: Because, although both are English phrases, 'what's up?' is less common than 'hello world' in the way Oscar Wilde writes.
 # BTW, the longer the sentence, the lower the probability.
-# 4. The probability of 'hello world' is very low. Does it mean that is not common / probable?
+# 7. The probability of 'hello world' is very low. Does it mean that is not common / probable?
 # Answer: No, it is low because it is computed the probability of that sentence in the whole English language (written by Oscar Wilde). That is why it is so low. However it is common in the English language (compare it to the two other sentences).
 # BTW, the longer the sentence, the lower the probability.
 
