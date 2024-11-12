@@ -108,6 +108,8 @@ The course has the following contents (click on the links to access the supporti
      - [Simple, multiple and deep RNN layers for time series prediction](deep-learning/rnn/simple_rnn.ipynb). 
      - [LSTM and GRU units](deep-learning/rnn/lstm_gru_old.ipynb).
      - [Language models in NLP](deep-learning/rnn/language_model.ipynb).
+     - [Contextual word embeddings](deep-learning/rnn/embeddings.ipynb).
+     - [Semantic search](deep-learning/rnn/semantic_search.ipynb).
 
 
 Notice that this website only contains the Jupyter Notebooks of the course. That represents a small part of the course material. For any other information about the course, please contact [Francisco Ortin](https://www.reflection.uniovi.es/ortin/).
