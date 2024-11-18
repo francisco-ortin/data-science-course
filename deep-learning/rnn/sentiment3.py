@@ -205,9 +205,6 @@ glove_embedding_matrix = np.zeros((vocabulary_size, embedding_dim))
 for word_index in range(vocabulary_size):
     word = index_to_word.get(word_index, "<OOV>")
     embedding_vector = get_glove_word_embedding(word, glove_embeddings)
-    #if glove_embeddings.get(word) is None:
-        # if the word is not found in the GloVe embeddings, we set it to random values
-    #    embedding_vector = np.random.random(embedding_dim)
     glove_embedding_matrix[word_index] = embedding_vector
 
 
@@ -238,19 +235,34 @@ print(f"Test loss: {test_loss:.4f}.\nTest accuracy: {test_accuracy:.4f}.")
 example_reviews = ["The movie was a great waste of time. The plot was boring.",
                    "I loved the movie. The plot was amazing.",
                    "Would not recommend this movie to anyone."]
-sequences = []
-for review in example_reviews:
-    words_indexes = [1]  # start token
-    for word in review.split():
-        for char_to_remove in [".", ",", "!", "?"]:
-            word = word.lower().replace(char_to_remove, "")
-        words_indexes.append(word_to_index[word] if word in word_to_index else 2)  # OOV token
-    sequences.append(words_indexes)
 
-sequences = keras.preprocessing.sequence.pad_sequences(sequences, maxlen=max_review_length, padding="post", truncating="post")
 
-# make predictions
-predictions = glove_lstm_model.predict(sequences)
+def prepare_reviews_for_prediction(reviews_p: list[str], word_to_index_p: dict[str, int], max_review_length_p: int)\
+        -> np.array:
+    """
+    Prepare a list of reviews for prediction: include the <START> token, convert the words to lower case,
+    remove punctuation, convert the words to indexes, pad the sequences and truncate them if necessary.
+    :param reviews_p: the list of reviews to be prepared
+    :param word_to_index_p: a dictionary mapping words to indexes
+    :param max_review_length_p: the maximum length of the reviews
+    :return: and array of token sequences, one for each review
+    """
+    sequences_loc = []
+    for review in reviews_p:
+        words_indexes = [1]  # start token
+        for word in review.split():
+            for char_to_remove in [".", ",", "!", "?"]:
+                word = word.lower().replace(char_to_remove, "")
+            words_indexes.append(word_to_index_p[word] if word in word_to_index_p else 2)  # OOV token
+        sequences_loc.append(words_indexes)
+    # pad the sequences
+    sequences_loc = keras.preprocessing.sequence.pad_sequences(sequences_loc, maxlen=max_review_length_p,
+                                                               padding="post", truncating="post")
+    return sequences_loc
+
+
+sequences_to_predict = prepare_reviews_for_prediction(example_reviews, word_to_index, max_review_length)
+predictions = glove_lstm_model.predict(sequences_to_predict)
 
 for i, prediction in enumerate(predictions):
     print(f"Review {i + 1}: {example_reviews[i]}")
