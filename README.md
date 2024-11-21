@@ -104,7 +104,7 @@ The course has the following contents (click on the links to access the supporti
      - [Transfer learning and data augmentation](deep-learning/cnn/transfer_learning.ipynb). 
      - [Object detection with multiple outputs (multilabel)](deep-learning/cnn/object_detection.ipynb). 
      - [Pretrained deep models from Hugging Face](deep-learning/cnn/hugging_face.ipynb). 
-   - Sequence models.
+   - Sequence models with recurrent neural networks.
      - [Simple, multiple and deep RNN layers for time series prediction](deep-learning/rnn/simple_rnn.ipynb). 
      - [LSTM and GRU units](deep-learning/rnn/lstm_gru_old.ipynb).
      - [Language models in NLP](deep-learning/rnn/language_model.ipynb).
