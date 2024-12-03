@@ -1,9 +1,6 @@
-import pandas as pd
 import numpy as np
 from keras import Model
-from sklearn.preprocessing import MinMaxScaler
 import tensorflow as tf
-import matplotlib.pyplot as plt
 import os
 from tensorflow.keras.models import load_model
 
@@ -16,6 +13,7 @@ chars_to_remove = ["¡", "¿"]
 train_size_percentage = 85
 embedding_size = 128
 n_epochs = 10
+n_lstm_units = 512
 SOS_word, EOS_word = "startofsentence", "endofsentence"
 model_file_name = 'data/english_spanish_encoder_decoder.keras'
 
@@ -78,10 +76,10 @@ Y_valid = text_vec_layer_es([f"{sentence} {EOS_word}" for sentence in sentences_
 
 ## BUILD THE MODEL
 
-def create_model(n_lstm_units: int, vocab_size_p: int) -> Model:
+def create_model(n_lstm_units_p: int, vocab_size_p: int) -> Model:
     """
     Creates a Keras model for the Encoder-Decoder architecture.
-    :param n_lstm_units: Number of LSTM units in the Encoder and Decoder.
+    :param n_lstm_units_p: Number of LSTM units in the Encoder and Decoder.
     :param vocab_size_p: Vocabulary size.
     :return: The model
     """
@@ -107,7 +105,7 @@ def create_model(n_lstm_units: int, vocab_size_p: int) -> Model:
     # Since we are using a bi-LSTM layer, the final state is a tuple containing 2 short- and 2 long-term states,
     # one pair for each direction (that is why we use *encoder_states)
     encoder = tf.keras.layers.Bidirectional(
-        tf.keras.layers.LSTM(n_lstm_units//2, return_state=True))
+        tf.keras.layers.LSTM(n_lstm_units_p // 2, return_state=True))
     encoder_outputs, *encoder_states = encoder(encoder_embeddings)
 
     # we concatenate the states of the left and right LSTMs (first, the 2 short-term states and then the 2 long-term states)
@@ -118,7 +116,7 @@ def create_model(n_lstm_units: int, vocab_size_p: int) -> Model:
     # instead of the final state. It cannot be bidirectional, since it needs to generate the words in order (it would be cheating).
     # Remember that the Decoder is a conditional language model, so it needs to receive the states of the Encoder
     # (initial_state parameter)
-    decoder = tf.keras.layers.LSTM(n_lstm_units, return_sequences=True)
+    decoder = tf.keras.layers.LSTM(n_lstm_units_p, return_sequences=True)
     decoder_outputs = decoder(decoder_embeddings, initial_state=encoder_state)
 
     # We add a Dense layer with a softmax activation function to predict the next word in the Spanish sentence
@@ -146,7 +144,7 @@ def compile_and_train_model(model: Model, X_train_encoder_p: np.array, X_train_d
     return model
 
 
-model = create_model(512, vocab_size)
+model = create_model(n_lstm_units, vocab_size)
 model = compile_and_train_model(model, X_train_encoder, X_train_decoder, Y_train, X_valid_encoder,
                                 X_valid_decoder, Y_valid, n_epochs, model_file_name)
 
@@ -179,12 +177,12 @@ def translate(sentence_en: str) -> str:
 
 
 # we test the translation with some sentences. Feel free to add more sentences to test the model
-english_sentences = ["hello",
-                     "how are you?",
+english_sentences = ["hello everyone",
+                     "how old are you?",
                      "what is your name?",
                      "where are you from?",
                      "I like soccer",
-                     "This is a long sentence that may not be translated correctly"]
+                     "This is a too long sentence to be translated correctly"]
 for sentence in english_sentences:
     print(f"{sentence} -> {translate(sentence)}.")
 
@@ -251,4 +249,22 @@ for sentence in english_sentences:
     print(f"Translation with beam search for: \n\t '{sentence}':")
     translation = beam_search(sentence, 3, verbose=True)
     print(f"Spanish translation: {translation}.")
+
+# This simple model performs decently on short sentences, but it struggles with longer sentences.
+# It is possible to significantly improve the translation quality by using attention.
+# A more sophisticated implementation of the Encoder-Decoder architecture with attention called Transformer
+# is the state-of-the-art model for machine translation, currently used by GPT, BERT, and many other models.
+
+## QUESTIONS
+# 1. What would happen in beam search if we used probability product instead of the sum of log probabilities?
+#    The product of many probabilities between 0 and 1 can be very small and lead to 0.0 after some iterations.
+# 2. Why do you think the model is not able to translate `Hello` correctly?
+#    The vocabulary is limited to 1,000 words, so it is possible that the word `Hello` is not in the vocabulary
+#    because it was not very common in the training data.
+# 3. Try it out.
+#    We increase the vocabulary size from 1,000 to 5,000 and see if the translation improves.
+# 4. Do you think the last sentence will be translated better with k=10? Try it out.
+#    It might be because it is long and there might be a better global solution.
+#    However, we tried it out and the translation is not better with k=10.
+
 
