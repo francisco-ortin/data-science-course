@@ -112,6 +112,7 @@ The course has the following contents (click on the links to access the supporti
      - [Semantic search](deep-learning/rnn/semantic_search.ipynb).
      - [Sentiment analysis](deep-learning/rnn/sentiment.ipynb).
      - [Training deep models with big datasets](deep-learning/rnn/lazy.ipynb).
+     - [Encoder-decoder models for nerunal machine translation](deep-learning/rnn/encoder_decoder.ipynb).
 
 
 Notice that this website only contains the Jupyter Notebooks of the course. That represents a small part of the course material. For any other information about the course, please contact [Francisco Ortin](https://www.reflection.uniovi.es/ortin/).
