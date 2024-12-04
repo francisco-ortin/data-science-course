@@ -190,7 +190,14 @@ for sentence in english_sentences:
 ## BEAM SEARCH
 
 
-def beam_search(sentence_en: str, beam_width: int, verbose=False):
+def beam_search(sentence_en: str, beam_width: int, verbose=False) -> str:
+    """
+    Translates an English sentence into Spanish using beam search wit k=beam_width.
+    :param sentence_en: The Encoder input (English sentence).
+    :param beam_width: The k parameter of the beam search algorithm.
+    :param verbose: Whether to display the top words and translations at each step.
+    :return: The Spanish translation.
+    """
     # Translation of the first word
     # Encoder input: one English sentence (batch size = 1)
     X_inf_encoder = np.array([sentence_en])
