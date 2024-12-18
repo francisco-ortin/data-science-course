@@ -137,6 +137,9 @@ def detect_outliers_iqr(df: pd.DataFrame, threshold: float = 1.5) -> pd.DataFram
     """
     This function takes a DataFrame df of features and returns a DataFrame df_outliers of the same shape
     indicating True for outliers and False for non-outliers according to the IQR method.
+    :param df: DataFrame of features
+    :param threshold: Threshold K to multiply the IQR method for detecting outliers
+    :return: DataFrame of the same shape as df with True for outliers and False for non-outliers
     """
     Q1 = df.quantile(0.25)
     Q3 = df.quantile(0.75)
