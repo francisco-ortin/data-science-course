@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
 from scipy.stats import norm, t
 
 
@@ -66,3 +67,25 @@ def cohen_d(x: list[float] | np.ndarray, y: list[float] | np.ndarray) -> float:
     dof = n_x + n_y - 2
     return (np.mean(x) - np.mean(y)) / np.sqrt(
         ((n_x - 1) * np.std(x, ddof=1) ** 2 + (n_y - 1) * np.std(y, ddof=1) ** 2) / dof)
+
+
+def plot_three_histograms(first_ds: np.ndarray, second_ds: np.ndarray, third_ds: np.ndarray,
+                          first_title: str, second_title: str, third_title:str) -> None:
+    """
+    Plot three histograms
+    :param first_ds: first dataset
+    :param second_ds: second dataset
+    :param third_ds: third dataset
+    :param first_title: title of the first dataset
+    :param second_title: title of the second dataset
+    :param third_title: title of the third dataset
+    """
+    fig, axs = plt.subplots(1, 3, figsize=(15, 5))
+    axs[0].hist(first_ds, bins=50)
+    axs[0].set_title(first_title)
+    axs[1].hist(second_ds, bins=50)
+    axs[1].set_title(second_title)
+    axs[2].hist(third_ds, bins=50)
+    axs[2].set_title(third_title)
+    plt.show()
+
