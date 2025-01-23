@@ -343,7 +343,7 @@ price,bedrooms,bathrooms,stories,mainroad,guestroom,basement,hotwaterheating,air
 3920000,3.0,1,1.0,yes,no,no,no,yes,2,no,semi-furnished,68.0,158.0,2296
 3920000,4.0,2,1.0,yes,no,yes,no,no,0,yes,unfurnished,33.0,80.0,1876
 3885000,2.0,1,2.0,yes,yes,yes,no,no,0,no,semi-furnished,46.0,108.0,1976
-3885000,4.0,2,2.0,yes,no,no,no,no,0,no,furnished,40.0,96.0,2371
+3885000,4.0,2,-2.0,yes,no,no,no,no,0,no,furnished,40.0,96.0,2371
 3850000,5.0,2,2.0,yes,no,no,no,no,0,no,semi-furnished,56.0,129.0,2110
 3850000,2.0,2,1.0,yes,no,yes,no,no,2,no,semi-furnished,34.0,90.0,2130
 3850000,3.0,1,2.0,yes,no,no,no,yes,0,no,furnished,61.0,145.0,2361

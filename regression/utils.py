@@ -148,6 +148,27 @@ def detect_outliers_iqr(df: pd.DataFrame, threshold: float = 1.5) -> pd.DataFram
     return df_outliers
 
 
+def detect_outliers_mad(data: pd.DataFrame, threshold: float = 3.0) -> pd.DataFrame:
+    """
+    Detect the outliers using the Median Absolute Deviation (MAD) method.
+    :param data: data to analyze
+    :param threshold: the threshold to consider a value as an outlier
+    :return: a DataFrame with True for outliers and False for inliers
+    """
+    # df_to_return holds False for all the values (not outliers)
+    df_to_return = pd.DataFrame(False, index=data.index, columns=data.columns)
+    for column in data.columns:
+        # Compute the median and MAD for the current column
+        median = data[column].median()
+        mad = (data[column] - median).abs().median()
+        # if mad is cero, it cannot be applied. We set it to infinite to avoid outliers
+        mad = mad if mad != 0 else np.inf
+        # Find the outliers
+        outliers = (data[column] - median).abs() > threshold * mad
+        # set as True the values that are  outliers
+        df_to_return.loc[outliers, column] = True
+    return df_to_return
+
 
 def evaluate_regression(y_test: np.ndarray, y_pred: np.ndarray) -> tuple[float, float, float, float]:
     """Evaluate the regression model using the MSE, RMSE, MAE, and R-squared metrics."""
@@ -200,3 +221,52 @@ def show_regression_performance(mse: float, rmse: float, mae: float, r2: float, 
     print(f'Mean Absolute Error (MAE): {mae:.4f}')
     print(f'R-squared determination coefficient: {r2:.4f}', end=end)
 
+
+def modify_cells_lower_than(X_set: pd.DataFrame, column_names: list[str], cell_value: object, threshold: float) -> None:
+    """
+    Set the cells for column_names columns in the DataFrame to cell_value
+    if the corresponding value in the target variable is lower than the threshold.
+    :param X_set: independent variables
+    :param column_names: columns to modify
+    :param cell_value: value to set in the cell
+    :param threshold: threshold to compare with the target variable
+    """
+    for column in column_names:
+        mask = X_set[column] < threshold
+        X_set.loc[mask, column] = cell_value
+
+
+def drop_rows_lower_than(y_set: pd.Series, X_set: pd.DataFrame, threshold: int) ->\
+        tuple[pd.Series, pd.DataFrame]:
+    """
+    Drop the rows that have a value lower than the threshold in the target variable.
+    :param y_set: target variable
+    :param X_set: independent variables
+    :param threshold: all the values lower than this threshold will be removed
+    :return: (y_set, X_set) without the rows that have a value lower than the threshold
+    """
+    drop_indices = y_set[y_set < threshold].index
+    return y_set.drop(drop_indices), X_set.drop(drop_indices)
+
+
+def drop_rows_multiple_missing_values(X_set: pd.DataFrame, y_set: pd.DataFrame, threshold: int) ->\
+        tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Drop the rows that have more than the threshold missing values in the independent variables.
+    :param X_set: independent variables
+    :param y_set: dependent variable
+    :param threshold: the maximum number of missing values allowed in a row
+    :return: (independent variables, dependent variable) without the rows that have more than the threshold missing values
+    """
+    drop_indices_train = X_set[X_set.isnull().sum(axis=1) >= threshold].index
+    return X_set.drop(drop_indices_train), y_set.drop(drop_indices_train)
+
+
+def show_missing_values(dataset: pd.DataFrame, dataset_name: str) -> None:
+    """
+    Show the instances that have any missing values in the dataset.
+    :param dataset: dataset to analyze
+    :param dataset_name: name of the dataset to print in the output
+    """
+    missing_train_values = dataset[dataset.isnull().any(axis=1)]
+    print(f"Missing values in the {dataset_name} dataset:\n", missing_train_values, end='\n\n')
