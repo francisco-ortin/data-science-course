@@ -34,6 +34,7 @@ The course has the following contents (click on the links to access the supporti
      - [Label and one-hot encoding](statistics/encoding.ipynb).
      - [Central tendency](statistics/central.ipynb).
      - [Dispersion](statistics/dispersion.ipynb).
+     - [Outlier detection](statistics/outlier_detection.ipynb).
      - [Scaling and normalization](statistics/scaling_normalization.ipynb).
      - [Treating missing values](statistics/missing.ipynb).
      - [Correlation](statistics/correlation.ipynb).

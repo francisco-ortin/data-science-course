@@ -148,9 +148,9 @@ def detect_outliers_iqr(df: pd.DataFrame, threshold: float = 1.5) -> pd.DataFram
     return df_outliers
 
 
-def detect_outliers_mad(data: pd.DataFrame, threshold: float = 3.0) -> pd.DataFrame:
+def detect_outliers_modified_z(data: pd.DataFrame, threshold: float = 3.5) -> pd.DataFrame:
     """
-    Detect the outliers using the Median Absolute Deviation (MAD) method.
+    Detect the outliers using the Modified Z-score method.
     :param data: data to analyze
     :param threshold: the threshold to consider a value as an outlier
     :return: a DataFrame with True for outliers and False for inliers
@@ -158,15 +158,16 @@ def detect_outliers_mad(data: pd.DataFrame, threshold: float = 3.0) -> pd.DataFr
     # df_to_return holds False for all the values (not outliers)
     df_to_return = pd.DataFrame(False, index=data.index, columns=data.columns)
     for column in data.columns:
+        print(column)
         # Compute the median and MAD for the current column
         median = data[column].median()
         mad = (data[column] - median).abs().median()
         # if mad is cero, it cannot be applied. We set it to infinite to avoid outliers
         mad = mad if mad != 0 else np.inf
-        # Find the outliers
-        outliers = (data[column] - median).abs() > threshold * mad
-        # set as True the values that are  outliers
-        df_to_return.loc[outliers, column] = True
+        # Compute the modified Z-scores
+        modified_z_scores = 0.6745 * (data[column] - median) / mad
+        # Mark the outliers in df_to_return
+        df_to_return[column] = modified_z_scores.abs() > threshold
     return df_to_return
 
 
