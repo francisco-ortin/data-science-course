@@ -160,7 +160,6 @@ def detect_outliers_modified_z(data: pd.DataFrame, threshold: float = 3.5) -> pd
     # df_to_return holds False for all the values (not outliers)
     df_to_return = pd.DataFrame(False, index=data.index, columns=data.columns)
     for column in data.columns:
-        print(column)
         # Compute the median and MAD for the current column
         median = data[column].median()
         mad = (data[column] - median).abs().median()
