@@ -1,7 +1,9 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.linear_model import SGDRegressor
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import IterativeImputer, KNNImputer
+from sklearn.linear_model import SGDRegressor, LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 import seaborn as sns
@@ -271,3 +273,57 @@ def show_missing_values(dataset: pd.DataFrame, dataset_name: str) -> None:
     """
     missing_train_values = dataset[dataset.isnull().any(axis=1)]
     print(f"Missing values in the {dataset_name} dataset:\n", missing_train_values, end='\n\n')
+
+
+def impute_one_column_from_another_vice_versa(dataset: pd.DataFrame, column_names: [str]) -> pd.DataFrame:
+    """
+    Impute the missing values in the two specified columns using Linear Regression in both directions.
+    :param dataset: dataset to impute
+    :param column_names: list with the two column names to impute
+    :return: dataset with the imputed values
+    """
+    assert len(column_names) == 2, "column_names must contain exactly two column names."
+    result_df = dataset.copy()
+    # Create a temporary dataframe with the two columns to impute
+    temp_df = result_df[column_names].copy()
+    # Use IterativeImputer passing a linear regressor as an input for imputation
+    imputer = IterativeImputer(estimator=LinearRegression(), max_iter=10)
+    # Impute the values in both directions for the two columns
+    imputed_values = imputer.fit_transform(temp_df)
+    # Update the dataframe
+    result_df[column_names] = imputed_values
+    return result_df
+
+
+def impute_one_column_knn(dataset: pd.DataFrame, column_name: str) -> pd.DataFrame:
+    """
+    Impute the missing values in the specified column using KNN imputation.
+    :param dataset: dataset to impute
+    :param column_name: column name to impute
+    :return: dataset with the imputed values
+    """
+    result_df = dataset.copy()
+    # Use IterativeImputer passing a KNN regressor as an input for imputation
+    imputer = KNNImputer(n_neighbors=5)
+    imputed_values = imputer.fit_transform(dataset)  # all the columns are used for imputation
+    # Update the dataframe with the imputed column (the imputer imputes all the columns)
+    result_df[column_name] = imputed_values
+    return result_df
+
+
+def impute_one_column_knn(dataset: pd.DataFrame, column_name: str) -> pd.DataFrame:
+    """
+    Impute the missing values in the specified column using KNN imputation.
+    :param dataset: dataset to impute
+    :param column_name: column name to impute
+    :return: dataset with the imputed values
+    """
+    result_df = dataset.copy()
+    # Use KNNImputer (already uses regression, averaging neighbor values)
+    imputer = KNNImputer(n_neighbors=5)
+    imputed_values = imputer.fit_transform(dataset)  # returns numpy array
+    # Get the column index
+    col_idx = dataset.columns.get_loc(column_name)
+    # Update only the specific column with imputed values
+    result_df[column_name] = imputed_values[:, col_idx]
+    return result_df
