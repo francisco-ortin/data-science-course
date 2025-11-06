@@ -112,7 +112,7 @@ The course has the following contents (click on the links to access the supporti
      - [Contextual word embeddings](deep-learning/rnn/embeddings.ipynb).
      - [Semantic search](deep-learning/rnn/semantic_search.ipynb).
      - [Sentiment analysis](deep-learning/rnn/sentiment.ipynb).
-     - [Training deep models with big datasets](deep-learning/rnn/lazy.ipynb).
+     - [Training deep models with big datasets](deep-learning/rnn/lazy-backup.ipynb).
      - [Encoder-decoder models for nerunal machine translation](deep-learning/rnn/encoder_decoder.ipynb).
 
 
