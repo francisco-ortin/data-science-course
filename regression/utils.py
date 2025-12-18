@@ -326,3 +326,16 @@ def impute_one_column_knn(dataset: pd.DataFrame, column_name: str) -> pd.DataFra
     # Update only the specific column with imputed values
     result_df[column_name] = imputed_values[:, col_idx]
     return result_df
+
+
+def impute_mean(dataset: pd.DataFrame, column_name: str) -> pd.DataFrame:
+    """
+    Impute the missing values in the specified column using mean imputation.
+    :param dataset: dataset to impute
+    :param column_name: column name to impute
+    :return: dataset with the imputed values
+    """
+    result_df = dataset.copy()
+    mean_value = result_df[column_name].mean()
+    result_df[column_name].fillna(mean_value, inplace=True)
+    return result_df
